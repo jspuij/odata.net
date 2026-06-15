@@ -422,6 +422,7 @@ namespace Microsoft.OData.Client
         public override async Task<IODataResponseMessage> GetResponseAsync(CancellationToken cancellationToken)
         {
             HttpResponseMessage httpResponseMessage = await CreateSendTask(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             _httpResponseMessage = httpResponseMessage;
 
             return await ConvertHttpWebResponseAsync(httpResponseMessage).ConfigureAwait(false);
@@ -532,7 +533,7 @@ namespace Microsoft.OData.Client
             try
             {
                 // Use HttpCompletionOption.ResponseHeadersRead to shorten the window before cancellation is honoured
-                return await _client.SendAsync(_requestMessage, HttpCompletionOption.ResponseHeadersRead, sendToken).ConfigureAwait(false);
+                return await _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, sendToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException ex)
             {
